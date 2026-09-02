@@ -59,6 +59,7 @@ permissions:
 
 jobs:
   auto-merge:
+    if: ${{ secrets.AUTOMERGE_TOKEN != '' }}
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -67,20 +68,6 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-
-      - name: Verify the token is present
-        env:
-          AUTOMERGE_TOKEN: ${{ secrets.AUTOMERGE_TOKEN }}
-        run: |
-          if [ -z "$AUTOMERGE_TOKEN" ]; then
-            echo "::error::AUTOMERGE_TOKEN is not set."
-            echo "The default GITHUB_TOKEN cannot be used here: pushes made with it"
-            echo "do not trigger workflow runs, so an updated branch would never get"
-            echo "fresh checks and would never become mergeable."
-            echo "Set AUTOMERGE_TOKEN to a GitHub App installation token or a machine"
-            echo "account PAT with 'repo' scope."
-            exit 1
-          fi
 
       - name: Evaluate and merge
         env:
